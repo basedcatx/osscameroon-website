@@ -10,19 +10,14 @@ export default async function DevelopersPage({ searchParams }: { searchParams: R
 
   // TODO (fix-issue): The api returns duplicated entries for eact result.item. I don't know if the issue is on my end or whatever. When trying to access the OSS page i realized
   // That the input search dev filter was a bit too laggy, so I did some investigations (Expected to find my name after the firstcontribution :D) 
-  const uniqueMap: Map<string, Developer> = new Map();
-  for (const item of result.items) {
-    if (!uniqueMap.has(item.login)) uniqueMap.set(item.login, item)
-  }
-  const uniqueItems = Array.from(uniqueMap.values())
-  console.log("Result length", result.items.length, "Unique result length", uniqueItems.length)
 
-
+  // since filtering is an expensive computation, I would move this to the client side inorder to use useMemo
+ 
   return <section className="mx-auto max-w-container px-[clamp(16px,4vw,24px)] py-[clamp(40px,6vw,76px)] pb-[clamp(56px,8vw,90px)]">
     <h1 className="m-0 max-w-[20em] text-[clamp(30px,4vw,44px)] font-extrabold leading-[1.14] tracking-[-.03em]">Meet the experienced developers in our community</h1>
     <Suspense><DeveloperControls techs={TECHS} /></Suspense>
     <ResultRow start={result.start} end={result.end} total={result.total} page={result.page} pages={result.pages} />
-    <DeveloperList items={uniqueItems} />
+    <DeveloperList items={result.items} />
     <div className="mt-8 flex justify-end"><Suspense><Pager page={result.page} pages={result.pages} scrollTop /></Suspense></div>
   </section>;
 }
